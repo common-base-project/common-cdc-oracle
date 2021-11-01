@@ -1,5 +1,6 @@
 package io.cdc;
 
+import com.ververica.cdc.debezium.DebeziumSourceFunction;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import com.ververica.cdc.debezium.JsonDebeziumDeserializationSchema;
@@ -21,7 +22,7 @@ public class OracleSourceExample {
 //        env.setStateBackend(new FsStateBackend("hdfs://hadoop102:8020/cdc-test/ck"));
 
         //2.通过FlinkCDC构建SourceFunction
-        SourceFunction<String> sourceFunction = OracleSource.<String>builder()
+        DebeziumSourceFunction<String> sourceFunction = OracleSource.<String>builder()
                 .hostname("10.236.101.35")
                 .port(1521)
                 .database("XE") // monitor XE database
