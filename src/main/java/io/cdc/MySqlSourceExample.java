@@ -40,7 +40,7 @@ public class MySqlSourceExample {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         // enable checkpoint
-//        env.enableCheckpointing(3000);
+        env.enableCheckpointing(3000);
 
         env
                 .fromSource(mySqlSource, WatermarkStrategy.noWatermarks(), "MySQL Source")
