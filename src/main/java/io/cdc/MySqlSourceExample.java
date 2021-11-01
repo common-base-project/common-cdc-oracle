@@ -11,9 +11,9 @@ public class MySqlSourceExample {
     public static void main(String[] args) throws Exception {
 
         //1.获取Flink 执行环境
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        // set 4 parallel source tasks
-        env.setParallelism(1);
+//        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+//        // set 4 parallel source tasks
+//        env.setParallelism(1);
 
         //1.1 开启CK
 //        env.enableCheckpointing(5000);
@@ -24,7 +24,7 @@ public class MySqlSourceExample {
 //        env.setStateBackend(new FsStateBackend("hdfs://hadoop102:8020/cdc-test/ck"));
 
         //2.通过FlinkCDC构建SourceFunction
-        MySqlSource<String> sourceFunction = MySqlSource.<String>builder()
+        MySqlSource<String> mySqlSource = MySqlSource.<String>builder()
                 .hostname("10.236.101.13")
                 .port(32450)
                 .username("root")
@@ -34,21 +34,20 @@ public class MySqlSourceExample {
 //                .deserializer(new StringDebeziumDeserializationSchema())
                 .deserializer(new JsonDebeziumDeserializationSchema())
 //                .deserializer(new CustomerDeserializationSchema())
-                .startupOptions(StartupOptions.initial())
+//                .startupOptions(StartupOptions.initial())
                 .build();
 
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+
         // enable checkpoint
-        env.enableCheckpointing(3000);
+//        env.enableCheckpointing(3000);
 
         env
-                .fromSource(sourceFunction, WatermarkStrategy.noWatermarks(), "MySQL Source")
+                .fromSource(mySqlSource, WatermarkStrategy.noWatermarks(), "MySQL Source")
                 // set 4 parallel source tasks
-                .setParallelism(4)
-                //3.数据打印
-                .print()
-                .setParallelism(1); // use parallelism 1 for sink to keep message ordering
+                .setParallelism(1)
+                .print().setParallelism(1); // use parallelism 1 for sink to keep message ordering
 
-        //4.启动任务
         env.execute("Print MySQL Snapshot + Binlog");
     }
 
