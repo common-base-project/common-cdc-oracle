@@ -1,11 +1,9 @@
 package io.cdc;
 
-import com.ververica.cdc.connectors.mysql.MySqlSource;
+import com.ververica.cdc.connectors.mysql.source.MySqlSource;
 import com.ververica.cdc.connectors.mysql.table.StartupOptions;
-import com.ververica.cdc.debezium.DebeziumSourceFunction;
 import com.ververica.cdc.debezium.JsonDebeziumDeserializationSchema;
-import com.ververica.cdc.debezium.StringDebeziumDeserializationSchema;
-import org.apache.flink.streaming.api.datastream.DataStreamSource;
+import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 public class MySqlSourceExample {
@@ -14,6 +12,7 @@ public class MySqlSourceExample {
 
         //1.获取Flink 执行环境
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        // set 4 parallel source tasks
         env.setParallelism(1);
 
         //1.1 开启CK
@@ -25,7 +24,7 @@ public class MySqlSourceExample {
 //        env.setStateBackend(new FsStateBackend("hdfs://hadoop102:8020/cdc-test/ck"));
 
         //2.通过FlinkCDC构建SourceFunction
-        DebeziumSourceFunction<String> sourceFunction = MySqlSource.<String>builder()
+        MySqlSource<String> sourceFunction = MySqlSource.<String>builder()
                 .hostname("10.236.101.13")
                 .port(32450)
                 .username("root")
@@ -38,14 +37,19 @@ public class MySqlSourceExample {
                 .startupOptions(StartupOptions.initial())
                 .build();
 
-        DataStreamSource<String> dataStreamSource = env.addSource(sourceFunction);
+        // enable checkpoint
+        env.enableCheckpointing(3000);
 
-        //3.数据打印
-        dataStreamSource.print();
+        env
+                .fromSource(sourceFunction, WatermarkStrategy.noWatermarks(), "MySQL Source")
+                // set 4 parallel source tasks
+                .setParallelism(4)
+                //3.数据打印
+                .print()
+                .setParallelism(1); // use parallelism 1 for sink to keep message ordering
 
         //4.启动任务
-        env.execute("FlinkCDC");
-
+        env.execute("Print MySQL Snapshot + Binlog");
     }
 
 }

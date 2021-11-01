@@ -13,6 +13,7 @@
         <maven.compiler.target>8</maven.compiler.target>
 
         <flink-version>1.13.3</flink-version>
+        <oracle.version>11.2.0.3</oracle.version>
     </properties>
 
     <dependencies>
@@ -40,35 +41,23 @@
             <version>3.3.1</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>mysql</groupId>-->
-<!--            <artifactId>mysql-connector-java</artifactId>-->
-<!--            <version>5.1.49</version>-->
-<!--        </dependency>-->
-
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.27</version>
         </dependency>
 
+        <!--oracle驱动-->
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc6</artifactId>
+            <version>${oracle.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-table-planner-blink_2.12</artifactId>
             <version>${flink-version}</version>
-        </dependency>
-
-<!--        <dependency>-->
-<!--            <groupId>com.ververica</groupId>-->
-<!--            <artifactId>flink-connector-mysql-cdc</artifactId>-->
-<!--            <version>2.0.0</version>-->
-<!--        </dependency>-->
-
-        <dependency>
-            <groupId>com.ververica</groupId>
-            <artifactId>flink-connector-oracle-cdc</artifactId>
-            <!-- the dependency is available only for stable releases. -->
-            <version>2.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
