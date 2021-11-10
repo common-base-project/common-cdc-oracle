@@ -30,8 +30,7 @@ public class MySqlSourceExample {
                 .username("root")
                 .password("1VfMyvwwrq")
                 .databaseList("db_sau")
-//                .tableList("db_sau.t_comment_info")
-//                .deserializer(new StringDebeziumDeserializationSchema())
+                .tableList("db_sau.t_comment_info")
                 .deserializer(new JsonDebeziumDeserializationSchema())
 //                .deserializer(new CustomerDeserializationSchema())
 //                .startupOptions(StartupOptions.initial())
@@ -45,10 +44,14 @@ public class MySqlSourceExample {
         env
                 .fromSource(mySqlSource, WatermarkStrategy.noWatermarks(), "MySQL Source")
                 // set 4 parallel source tasks
-                .setParallelism(1)
-                .print().setParallelism(1); // use parallelism 1 for sink to keep message ordering
+                // 设置4个并行源任务
+                .setParallelism(2)
+                // 对接收器使用并行度 1 以保持消息排序
+                // use parallelism 1 for sink to keep message ordering
+                .print().setParallelism(1);
 
         env.execute("Print MySQL Snapshot + Binlog");
+
     }
 
 }
