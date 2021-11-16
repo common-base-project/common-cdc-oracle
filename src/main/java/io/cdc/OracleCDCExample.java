@@ -1,14 +1,19 @@
 package io.cdc;
 
+import com.ververica.cdc.connectors.oracle.OracleSource;
+import com.ververica.cdc.connectors.oracle.table.StartupOptions;
+import com.ververica.cdc.debezium.JsonDebeziumDeserializationSchema;
+import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
-import com.ververica.cdc.debezium.JsonDebeziumDeserializationSchema;
-import com.ververica.cdc.connectors.oracle.OracleSource;
 
-public class OracleSourceExample {
+/**
+ * oracle jdbc drive：
+ * https://debezium.io/releases/
+ */
+public class OracleCDCExample {
 
     public static void main(String[] args) throws Exception {
-
         //1.获取Flink 执行环境
 //        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 //        env.setParallelism(1);
@@ -20,27 +25,31 @@ public class OracleSourceExample {
 //        env.getCheckpointConfig().setMaxConcurrentCheckpoints(1);
 //        env.setStateBackend(new FsStateBackend("hdfs://hadoop102:8020/cdc-test/ck"));
 
-        //2.通过FlinkCDC构建SourceFunction
         SourceFunction<String> sourceFunction = OracleSource.<String>builder()
-                .hostname("10.236.101.35")
+                .hostname("180.76.142.128")
                 .port(1521)
-                .database("XE") // monitor XE database
-                .schemaList("flinkuser")    // monitor inventory schema
-                .tableList("flinkuser.products") // monitor products table
+                // monitor XE database
+                .database("XE")
+                // monitor inventory schema
+                .schemaList("inventory")
+                // monitor products table
+                .tableList("inventory.products")
                 .username("flinkuser")
                 .password("flinkpw")
-                .deserializer(new JsonDebeziumDeserializationSchema()) // converts SourceRecord to JSON String
+                // converts SourceRecord to JSON String
+                .deserializer(new JsonDebeziumDeserializationSchema())
+                .startupOptions(StartupOptions.initial())
                 .build();
 
-        //3.数据打印
-//        dataStreamSource.print();
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.addSource(sourceFunction)
-                .print()
-                .setParallelism(1); // use parallelism 1 for sink to keep message ordering
+        // enable checkpoint
+        env.enableCheckpointing(3000);
+        env
+                .addSource(sourceFunction)
+                // use parallelism 1 for sink to keep message ordering
+                .print().setParallelism(1);
 
-        //4.启动任务
-        env.execute("FlinkCDC");
+        env.execute("Oracle-CDC-Example");
 
 
 //        //2.通过FlinkCDC构建SourceFunction
