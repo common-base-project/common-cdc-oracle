@@ -40,7 +40,6 @@ public class OracleCDCExample {
                 .deserializer(new JsonDebeziumDeserializationSchema())
                 .startupOptions(StartupOptions.initial())
                 .build();
-        //StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.enableCheckpointing(3000);
         env
                 .addSource(sourceFunction)

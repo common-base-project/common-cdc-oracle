@@ -16,8 +16,7 @@
         <!--        <flink-version>1.14.0</flink-version>-->
         <flink-version>1.13.3</flink-version>
         <scala.binary.version>2.11</scala.binary.version>
-        <oracle.version>11.2.0.3</oracle.version>
-        <oracle12.version>19.3.0.0</oracle12.version>
+        <oracle.version>21.1.0.0</oracle.version>
         <flink-connector-cdc-version>2.1.0</flink-connector-cdc-version>
     </properties>
 
@@ -59,30 +58,17 @@
         </dependency>
 
         <!--oracle驱动-->
-        <!--        <dependency>-->
-        <!--            <groupId>com.oracle</groupId>-->
-        <!--            <artifactId>ojdbc6</artifactId>-->
-        <!--            <version>${oracle.version}</version>-->
-        <!--        </dependency>-->
-
 <!--        <dependency>-->
-<!--            <groupId>com.oracle.ojdbc</groupId>-->
+<!--            <groupId>com.oracle.database.jdbc</groupId>-->
 <!--            <artifactId>ojdbc8</artifactId>-->
-<!--            <version>${oracle12.version}</version>-->
+<!--            <version>${oracle.version}</version>-->
 <!--        </dependency>-->
 
         <dependency>
-            <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>ojdbc6</artifactId>
-            <version>11.2.0.4</version>
+            <groupId>com.oracle.ojdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
+            <version>19.3.0.0</version>
         </dependency>
-
-        <!--        <dependency>-->
-        <!--            <groupId>org.apache.flink</groupId>-->
-        <!--            <artifactId>flink-table-planner-blink_2.11</artifactId>-->
-        <!--            <version>1.13.3</version>-->
-        <!--            <scope>test</scope>-->
-        <!--        </dependency>-->
 
         <dependency>
             <groupId>org.apache.flink</groupId>
