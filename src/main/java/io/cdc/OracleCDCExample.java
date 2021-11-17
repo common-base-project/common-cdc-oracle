@@ -26,7 +26,7 @@ public class OracleCDCExample {
 //        env.setStateBackend(new FsStateBackend("hdfs://hadoop102:8020/cdc-test/ck"));
 
         SourceFunction<String> sourceFunction = OracleSource.<String>builder()
-                .hostname("180.76.142.128")
+                .hostname("10.236.101.15")
                 .port(1521)
                 // monitor XE database
                 .database("XE")
@@ -38,18 +38,15 @@ public class OracleCDCExample {
                 .password("flinkpw")
                 // converts SourceRecord to JSON String
                 .deserializer(new JsonDebeziumDeserializationSchema())
-                .startupOptions(StartupOptions.initial())
+                //.startupOptions(StartupOptions.initial())
                 .build();
-
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        // enable checkpoint
         env.enableCheckpointing(3000);
         env
                 .addSource(sourceFunction)
                 // use parallelism 1 for sink to keep message ordering
                 .print().setParallelism(1);
-
-        env.execute("Oracle-CDC-Example");
+        env.execute();
 
 
 //        //2.通过FlinkCDC构建SourceFunction
