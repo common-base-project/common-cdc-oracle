@@ -15,8 +15,8 @@ public class OracleCDCExample {
 
     public static void main(String[] args) throws Exception {
         //1.获取Flink 执行环境
-//        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-//        env.setParallelism(1);
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        env.setParallelism(1);
 
         //1.1 开启CK
 //        env.enableCheckpointing(5000);
@@ -31,22 +31,22 @@ public class OracleCDCExample {
                 // monitor XE database
                 .database("XE")
                 // monitor inventory schema
-                .schemaList("inventory")
+                .schemaList("flinkuser")
                 // monitor products table
-                .tableList("inventory.products")
+                .tableList("flinkuser.products")
                 .username("flinkuser")
                 .password("flinkpw")
                 // converts SourceRecord to JSON String
                 .deserializer(new JsonDebeziumDeserializationSchema())
-                //.startupOptions(StartupOptions.initial())
+                .startupOptions(StartupOptions.initial())
                 .build();
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        //StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.enableCheckpointing(3000);
         env
                 .addSource(sourceFunction)
                 // use parallelism 1 for sink to keep message ordering
-                .print().setParallelism(1);
-        env.execute();
+                .print();
+        env.execute("oracle-cdc");
 
 
 //        //2.通过FlinkCDC构建SourceFunction

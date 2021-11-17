@@ -24,32 +24,32 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 public class MysqlCdcTest {
     public static void main(String[] args) throws Exception {
 
-        //MySqlSource<String> mySqlSource = MySqlSource.<String>builder()
-        //        .hostname("10.236.101.13")
-        //        .port(32450)
-        //        .username("root")
-        //        .password("1VfMyvwwrq")
-        //        .databaseList("test")
-        //        .tableList("test.user")
-        //        //.serverId("5400")
-        //        .deserializer(new JsonDebeziumDeserializationSchema())
-        //        .startupOptions(StartupOptions.initial())
-        //        .build();
-
         MySqlSource<String> mySqlSource = MySqlSource.<String>builder()
-                .hostname("cdb-6ocyiznz.gz.tencentcdb.com")
-                .port(10111)
-                // set captured database
-                .databaseList("test")
-                // set captured table
-                .tableList("test.missu_users")
+                .hostname("10.236.101.13")
+                .port(32450)
                 .username("root")
-                .password("rabbit@1104")
-                .startupOptions(StartupOptions.initial())
-                // converts SourceRecord to JSON String
+                .password("1VfMyvwwrq")
+                .databaseList("test")
+                .tableList("test.user")
+                //.serverId("5400")
                 .deserializer(new JsonDebeziumDeserializationSchema())
-                //.deserializer(new StringDebeziumDeserializationSchema())
+                .startupOptions(StartupOptions.initial())
                 .build();
+
+        //MySqlSource<String> mySqlSource = MySqlSource.<String>builder()
+        //        .hostname("cdb-6ocyiznz.gz.tencentcdb.com")
+        //        .port(10111)
+        //        // set captured database
+        //        .databaseList("test")
+        //        // set captured table
+        //        .tableList("test.missu_users")
+        //        .username("root")
+        //        .password("")
+        //        .startupOptions(StartupOptions.initial())
+        //        // converts SourceRecord to JSON String
+        //        .deserializer(new JsonDebeziumDeserializationSchema())
+        //        //.deserializer(new StringDebeziumDeserializationSchema())
+        //        .build();
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         // enable checkpoint
