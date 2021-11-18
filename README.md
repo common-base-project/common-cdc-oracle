@@ -1,5 +1,11 @@
 # Flink CDC Oracle
 ```markdown
+## flink 官方中文文档
+    https://nightlies.apache.org/flink/flink-docs-release-1.13/zh/docs/dev/table/sql/overview/ 
+
+## flink cdc jar包
+    https://repo.maven.apache.org/maven2/org/apache/flink/ 
+
 ## git 使用
     git init --initial-branch=main
     git remote add origin git@gitlab.com:cq-bigdata/backend/common-cdc-oracle.git

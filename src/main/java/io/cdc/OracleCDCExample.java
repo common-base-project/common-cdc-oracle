@@ -7,6 +7,8 @@ import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
 
+import java.util.Properties;
+
 /**
  * oracle jdbc drive：
  * https://debezium.io/releases/
@@ -16,7 +18,7 @@ public class OracleCDCExample {
     public static void main(String[] args) throws Exception {
         //1.获取Flink 执行环境
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.setParallelism(1);
+        //env.setParallelism(1);
 
         //1.1 开启CK
 //        env.enableCheckpointing(5000);
@@ -24,6 +26,9 @@ public class OracleCDCExample {
 //        env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
 //        env.getCheckpointConfig().setMaxConcurrentCheckpoints(1);
 //        env.setStateBackend(new FsStateBackend("hdfs://hadoop102:8020/cdc-test/ck"));
+
+        Properties properties = new Properties();
+        properties.setProperty("database.tablename.case.insensitive","false");
 
         SourceFunction<String> sourceFunction = OracleSource.<String>builder()
                 .hostname("10.236.101.15")
@@ -36,15 +41,17 @@ public class OracleCDCExample {
                 .tableList("flinkuser.products")
                 .username("flinkuser")
                 .password("flinkpw")
+                .debeziumProperties(properties)
                 // converts SourceRecord to JSON String
                 .deserializer(new JsonDebeziumDeserializationSchema())
                 .startupOptions(StartupOptions.initial())
                 .build();
-        env.enableCheckpointing(3000);
+
+        env.enableCheckpointing(1000);
         env
                 .addSource(sourceFunction)
                 // use parallelism 1 for sink to keep message ordering
-                .print();
+                .print().setParallelism(1);
         env.execute("oracle-cdc");
 
 

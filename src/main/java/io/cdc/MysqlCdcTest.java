@@ -24,6 +24,8 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 public class MysqlCdcTest {
     public static void main(String[] args) throws Exception {
 
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+
         MySqlSource<String> mySqlSource = MySqlSource.<String>builder()
                 .hostname("10.236.101.13")
                 .port(32450)
@@ -51,9 +53,7 @@ public class MysqlCdcTest {
         //        //.deserializer(new StringDebeziumDeserializationSchema())
         //        .build();
 
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        // enable checkpoint
-        env.enableCheckpointing(3000);
+        env.enableCheckpointing(1000);
         env
                 .fromSource(mySqlSource, WatermarkStrategy.noWatermarks(), "MySQL-Source")
                 // set 4 parallel source tasks
