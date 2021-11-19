@@ -2,10 +2,9 @@ package io.cdc;
 
 import com.ververica.cdc.connectors.oracle.OracleSource;
 import com.ververica.cdc.connectors.oracle.table.StartupOptions;
+import com.ververica.cdc.debezium.DebeziumSourceFunction;
 import com.ververica.cdc.debezium.JsonDebeziumDeserializationSchema;
-import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.api.functions.source.SourceFunction;
 
 import java.util.Properties;
 
@@ -28,9 +27,10 @@ public class OracleCDCExample {
 //        env.setStateBackend(new FsStateBackend("hdfs://hadoop102:8020/cdc-test/ck"));
 
         Properties properties = new Properties();
-        properties.setProperty("database.tablename.case.insensitive","false");
+        //properties.setProperty("database.tablename.case.insensitive","false");
 
-        SourceFunction<String> sourceFunction = OracleSource.<String>builder()
+        DebeziumSourceFunction<String> sourceFunction = OracleSource.<String>builder()
+        //SourceFunction<String> sourceFunction = OracleSource.<String>builder()
                 .hostname("10.236.101.15")
                 .port(1521)
                 // monitor XE database
@@ -41,7 +41,7 @@ public class OracleCDCExample {
                 .tableList("flinkuser.products")
                 .username("flinkuser")
                 .password("flinkpw")
-                .debeziumProperties(properties)
+                //.debeziumProperties(properties)
                 // converts SourceRecord to JSON String
                 .deserializer(new JsonDebeziumDeserializationSchema())
                 .startupOptions(StartupOptions.initial())
